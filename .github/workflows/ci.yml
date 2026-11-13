@@ -1,4 +1,4 @@
-#Goal: Push frontened on Docker hub using GitHub actions setup
+#Goal: Build the image for DevBoard Frontend and Push to Docker Hub, after linting the code
 name: CI 
 
 on: 
@@ -6,7 +6,31 @@ on:
     branches: [master]
 
 jobs:
+
+  code-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v3
+        with:
+          eslint: true
+          prettier: true
+      
   build-and-push:
+
+    needs: [code-lint]
     runs-on: ubuntu-latest
     
     steps:
@@ -18,12 +42,6 @@ jobs:
       with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Debug files
-      run: |
-        pwd
-        ls -la
-        find . -iname "*dockerfile*" -not -path "./.git/*"
 
     - name: Docker Push and Build
       uses: docker/build-push-action@v7
