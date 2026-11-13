@@ -29,7 +29,6 @@ jobs:
       uses: docker/build-push-action@v7
       with:
         context: ./frontend          # <-- apna frontend folder
-        file: ./frontend/Dockerfile
         push: true
         tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-fe-master:latest
       
