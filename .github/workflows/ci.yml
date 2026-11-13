@@ -1,0 +1,24 @@
+#Goal: Push frontened on Docker hub using GitHub actions setup
+name: CI 
+
+on: 
+  push:
+    branches: [master]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v7
+
+    - name: Docker Setup [login]
+      uses: docker/login-action@v4
+      with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+    
+  
+    
